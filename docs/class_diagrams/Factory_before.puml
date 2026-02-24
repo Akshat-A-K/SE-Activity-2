@@ -1,0 +1,216 @@
+@startuml Before_Factory_Pattern
+
+' Styling
+skinparam classAttributeIconSize 0
+skinparam classFontSize 11
+skinparam packageStyle rectangle
+
+package "flight.reservation" {
+    class Customer {
+        - email: String
+        - name: String
+        - orders: List<Order>
+        + Customer(name: String, email: String)
+        + createOrder(passengerNames: List<String>, flights: List<ScheduledFlight>, price: double): FlightOrder
+        - isOrderValid(passengerNames: List<String>, flights: List<ScheduledFlight>): boolean
+        + getEmail(): String
+        + getName(): String
+        + getOrders(): List<Order>
+    }
+
+    class Passenger {
+        - name: String
+        + Passenger(name: String)
+        + getName(): String
+    }
+
+    class Airport {
+        - name: String
+        - code: String
+        - location: String
+        - flights: List<Flight>
+        - allowedAircrafts: String[]
+        + Airport(name: String, code: String, location: String)
+        + Airport(name: String, code: String, location: String, allowedAircrafts: String[])
+        + getName(): String
+        + getCode(): String
+        + getLocation(): String
+        + getAllowedAircrafts(): String[]
+    }
+}
+
+package "flight.reservation.flight" {
+    class Flight {
+        - number: int
+        - departure: Airport
+        - arrival: Airport
+        # aircraft: Object
+        + Flight(number: int, departure: Airport, arrival: Airport, aircraft: Object)
+        - checkValidity(): void
+        - isAircraftValid(airport: Airport): boolean
+        + getAircraft(): Object
+        + getNumber(): int
+        + getDeparture(): Airport
+        + getArrival(): Airport
+        + toString(): String
+    }
+
+    class ScheduledFlight {
+        - passengers: List<Passenger>
+        - departureTime: Date
+        - currentPrice: double
+        + ScheduledFlight(number: int, departure: Airport, arrival: Airport, aircraft: Object, departureTime: Date)
+        + ScheduledFlight(number: int, departure: Airport, arrival: Airport, aircraft: Object, departureTime: Date, currentPrice: double)
+        + getCrewMemberCapacity(): int
+        + addPassengers(passengers: List<Passenger>): void
+        + removePassengers(passengers: List<Passenger>): void
+        + getCapacity(): int
+        + getAvailableCapacity(): int
+        + getDepartureTime(): Date
+        + getPassengers(): List<Passenger>
+        + getCurrentPrice(): double
+    }
+
+    class Schedule {
+        - scheduledFlights: List<ScheduledFlight>
+        + Schedule()
+        + getScheduledFlights(): List<ScheduledFlight>
+        + scheduleFlight(flight: Flight, date: Date): void
+        + removeFlight(flight: Flight): void
+        + removeScheduledFlight(flight: ScheduledFlight): void
+        + searchScheduledFlight(flightNumber: int): ScheduledFlight
+        + clear(): void
+    }
+}
+
+package "flight.reservation.plane" {
+    class PassengerPlane {
+        + model: String
+        + passengerCapacity: int
+        + crewCapacity: int
+        + PassengerPlane(model: String)
+    }
+
+    class Helicopter {
+        - model: String
+        - passengerCapacity: int
+        + Helicopter(model: String)
+        + getModel(): String
+        + getPassengerCapacity(): int
+    }
+
+    class PassengerDrone {
+        - model: String
+        + PassengerDrone(model: String)
+    }
+}
+
+package "flight.reservation.order" {
+    class Order {
+        - id: UUID
+        - price: double
+        - isClosed: boolean
+        - customer: Customer
+        - passengers: List<Passenger>
+        + Order()
+        + getId(): UUID
+        + getPrice(): double
+        + setPrice(price: double): void
+        + getCustomer(): Customer
+        + setCustomer(customer: Customer): void
+        + getPassengers(): List<Passenger>
+        + setPassengers(passengers: List<Passenger>): void
+        + isClosed(): boolean
+        + setClosed(): void
+    }
+
+    class FlightOrder {
+        - flights: List<ScheduledFlight>
+        {static} - noFlyList: List<String>
+        + FlightOrder(flights: List<ScheduledFlight>)
+        + {static} getNoFlyList(): List<String>
+        + getScheduledFlights(): List<ScheduledFlight>
+        - isOrderValid(customer: Customer, passengerNames: List<String>, flights: List<ScheduledFlight>): boolean
+        + processOrderWithCreditCardDetail(number: String, expirationDate: Date, cvv: String): boolean
+        + processOrderWithCreditCard(creditCard: CreditCard): boolean
+        - cardIsPresentAndValid(card: CreditCard): boolean
+        + processOrderWithPayPal(email: String, password: String): boolean
+        + payWithCreditCard(card: CreditCard, amount: double): boolean
+        + payWithPayPal(email: String, password: String, amount: double): boolean
+    }
+}
+
+package "flight.reservation.payment" {
+    class CreditCard {
+        - amount: double
+        - number: String
+        - date: Date
+        - cvv: String
+        - valid: boolean
+        + CreditCard(number: String, date: Date, cvv: String)
+        + setAmount(amount: double): void
+        + getAmount(): double
+        + isValid(): boolean
+        + setValid(): void
+    }
+
+    class Paypal {
+        + {static} DATA_BASE: Map<String, String>
+    }
+}
+
+' Relationships
+Customer "1" -- "*" Order : creates >
+Customer "1" -- "*" Passenger : books for >
+Order <|-- FlightOrder
+FlightOrder "*" -- "*" ScheduledFlight : contains >
+FlightOrder "*" -- "*" Passenger : has >
+FlightOrder ..> CreditCard : uses >
+FlightOrder ..> Paypal : uses >
+
+Flight <|-- ScheduledFlight
+Flight "*" -- "1" Airport : departs from >
+Flight "*" -- "1" Airport : arrives at >
+Flight "1" -- "1" PassengerPlane : uses >
+Flight "1" -- "1" Helicopter : uses >
+Flight "1" -- "1" PassengerDrone : uses >
+
+ScheduledFlight "*" -- "*" Passenger : carries >
+Schedule "1" *-- "*" ScheduledFlight : manages >
+
+note right of Flight::aircraft
+  **PROBLEM: Type casting needed**
+  aircraft is stored as Object
+  Requires instanceof checks:
+  - PassengerPlane
+  - Helicopter
+  - PassengerDrone
+end note
+
+note right of PassengerPlane
+  **PROBLEM: Hard-coded models**
+  Switch statement in constructor
+  for different plane models:
+  - A380, A350
+  - Embraer 190
+  - Antonov AN2
+end note
+
+note right of ScheduledFlight::getCapacity
+  **PROBLEM: Repetitive type checking**
+  Must check aircraft type:
+  if (aircraft instanceof PassengerPlane)
+  if (aircraft instanceof Helicopter)
+  if (aircraft instanceof PassengerDrone)
+end note
+
+note bottom of Flight
+  **Key Issues Without Factory Pattern:**
+  1. Direct instantiation of aircraft types
+  2. Type casting required (Object type)
+  3. No polymorphism for aircraft
+  4. Hard-coded model configurations
+  5. Violation of Open/Closed Principle
+end note
+
+@enduml
