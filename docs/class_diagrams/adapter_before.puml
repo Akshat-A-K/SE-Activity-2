@@ -1,0 +1,80 @@
+@startuml Adapter_Before
+
+title Adapter Pattern - BEFORE (Current Code)
+
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+
+class Flight {
+  - number: int
+  - departure: Airport
+  - arrival: Airport
+  # aircraft: Object
+  + Flight(number, departure, arrival, aircraft: Object)
+  - checkValidity(): void
+  - isAircraftValid(airport: Airport): boolean
+  + getAircraft(): Object
+  + getNumber(): int
+  + getDeparture(): Airport
+  + getArrival(): Airport
+}
+
+class ScheduledFlight {
+  - passengers: List<Passenger>
+  - departureTime: Date
+  - currentPrice: double
+  + getCrewMemberCapacity(): int
+  + getCapacity(): int
+  + getAvailableCapacity(): int
+  + addPassengers(passengers): void
+  + removePassengers(passengers): void
+}
+
+class PassengerPlane {
+  + model: String
+  + passengerCapacity: int
+  + crewCapacity: int
+  + PassengerPlane(model: String)
+}
+
+class Helicopter {
+  - model: String
+  - passengerCapacity: int
+  + Helicopter(model: String)
+  + getModel(): String
+  + getPassengerCapacity(): int
+}
+
+class PassengerDrone {
+  - model: String
+  + PassengerDrone(model: String)
+}
+
+Flight <|-- ScheduledFlight
+
+Flight ..> PassengerPlane : <<instanceof check>>
+Flight ..> Helicopter : <<instanceof check>>
+Flight ..> PassengerDrone : <<instanceof check>>
+ScheduledFlight ..> PassengerPlane : <<instanceof check>>
+ScheduledFlight ..> Helicopter : <<instanceof check>>
+ScheduledFlight ..> PassengerDrone : <<instanceof check>>
+
+note right of Flight::aircraft
+  Stored as Object type!
+  Uses instanceof chains to
+  determine aircraft model
+  and capacity.
+end note
+
+note bottom of PassengerPlane
+  Public fields!
+  No encapsulation.
+end note
+
+note bottom of PassengerDrone
+  No capacity field!
+  Hardcoded as 4 in
+  ScheduledFlight.
+end note
+
+@enduml
