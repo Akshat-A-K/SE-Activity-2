@@ -1,0 +1,57 @@
+@startuml
+title Adapter Pattern - Before Refactoring
+left to right direction
+
+package "flight.reservation.order" {
+	class Order {
+		- id : UUID
+		- price : double
+		- isClosed : boolean
+		- customer : Customer
+		- passengers : List<Passenger>
+		+ getPrice() : double
+		+ setPrice(price : double) : void
+		+ isClosed() : boolean
+		+ setClosed() : void
+	}
+
+	class FlightOrder {
+		- flights : List<ScheduledFlight>
+		- noFlyList : List<String>
+		+ processOrderWithCreditCardDetail(number : String, expirationDate : Date, cvv : String) : boolean
+		+ processOrderWithCreditCard(creditCard : CreditCard) : boolean
+		+ processOrderWithPayPal(email : String, password : String) : boolean
+		+ payWithCreditCard(card : CreditCard, amount : double) : boolean
+		+ payWithPayPal(email : String, password : String, amount : double) : boolean
+	}
+}
+
+package "flight.reservation.payment" {
+	class CreditCard {
+		- amount : double
+		- number : String
+		- date : Date
+		- cvv : String
+		- valid : boolean
+		+ getAmount() : double
+		+ setAmount(amount : double) : void
+		+ isValid() : boolean
+		+ setValid() : void
+	}
+
+	class Paypal {
+		+ {static} DATA_BASE : Map<String, String>
+	}
+}
+
+Order <|-- FlightOrder
+FlightOrder ..> CreditCard : creates/validates/pays
+FlightOrder ..> Paypal : reads DATA_BASE
+
+note right of FlightOrder
+	Directly coupled to concrete
+	payment classes and PayPal's
+	internal static store.
+end note
+
+@enduml
