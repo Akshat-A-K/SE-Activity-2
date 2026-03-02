@@ -3,10 +3,14 @@ package flight.reservation;
 import flight.reservation.flight.ScheduledFlight;
 import flight.reservation.order.FlightOrder;
 import flight.reservation.order.Order;
+import flight.reservation.order.builder.FlightOrderBuilder;
+import flight.reservation.order.validation.CapacityValidator;
+import flight.reservation.order.validation.NoFlyValidator;
+import flight.reservation.order.validation.OrderValidationContext;
+import flight.reservation.order.validation.OrderValidationHandler;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Customer {
 
@@ -24,32 +28,23 @@ public class Customer {
         if (!isOrderValid(passengerNames, flights)) {
             throw new IllegalStateException("Order is not valid");
         }
-        FlightOrder order = new FlightOrder(flights);
-        order.setCustomer(this);
-        order.setPrice(price);
-        List<Passenger> passengers = passengerNames
-                .stream()
-                .map(Passenger::new)
-                .collect(Collectors.toList());
-        order.setPassengers(passengers);
-        order.getScheduledFlights().forEach(scheduledFlight -> scheduledFlight.addPassengers(passengers));
+
+        FlightOrder order = new FlightOrderBuilder()
+                .withCustomer(this)
+                .withFlights(flights)
+                .withPassengerNames(passengerNames)
+                .withPrice(price)
+                .build();
+
         orders.add(order);
         return order;
     }
 
     private boolean isOrderValid(List<String> passengerNames, List<ScheduledFlight> flights) {
-        boolean valid = true;
-        valid = valid && !FlightOrder.getNoFlyList().contains(this.getName());
-        valid = valid && passengerNames.stream().noneMatch(passenger -> FlightOrder.getNoFlyList().contains(passenger));
-        valid = valid && flights.stream().allMatch(scheduledFlight -> {
-            try {
-                return scheduledFlight.getAvailableCapacity() >= passengerNames.size();
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
-                return false;
-            }
-        });
-        return valid;
+        OrderValidationContext context = new OrderValidationContext(this, passengerNames, flights);
+        OrderValidationHandler chain = new NoFlyValidator();
+        chain.setNext(new CapacityValidator());
+        return chain.validate(context);
     }
 
     public String getEmail() {

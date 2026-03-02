@@ -1,0 +1,60 @@
+@startuml
+title Chain of Responsibility Pattern - Before
+
+class Customer {
+    - email : String
+    - name : String
+    - orders : List<Order>
+    - isOrderValid(passengerNames : List<String>, flights : List<ScheduledFlight>) : boolean
+    + createOrder(passengerNames : List<String>, flights : List<ScheduledFlight>, price : double) : FlightOrder
+}
+
+class Order {
+    - id : UUID
+    - price : double
+    - isClosed : boolean
+    - customer : Customer
+    - passengers : List<Passenger>
+    + setClosed()
+}
+
+class FlightOrder {
+    - flights : List<ScheduledFlight>
+    - isOrderValid(customer : Customer, passengerNames : List<String>, flights : List<ScheduledFlight>) : boolean
+    + getNoFlyList() : List<String>
+    + noFlyList : List<String> {static}
+    + processOrderWithCreditCard(card : CreditCard) : boolean
+    + processOrderWithPayPal(email : String, password : String) : boolean
+}
+
+class ScheduledFlight {
+    - passengers : List<Passenger>
+    - departureTime : Date
+    - currentPrice : double
+    + getAvailableCapacity() : int
+}
+
+class CreditCard {
+    - amount : double
+    - number : String
+    - date : Date
+    - cvv : String
+    - valid : boolean
+}
+
+class Paypal {
+    + DATA_BASE : Map<String, String> {static}
+}
+
+FlightOrder --|> Order
+Order --> Customer : customer
+Order --> "*" Passenger : passengers
+FlightOrder --> "*" ScheduledFlight : flights
+
+Customer ..> FlightOrder : creates
+Customer ..> ScheduledFlight : capacity
+FlightOrder ..> ScheduledFlight : capacity
+FlightOrder ..> CreditCard : payment
+FlightOrder ..> Paypal : payment
+
+@enduml

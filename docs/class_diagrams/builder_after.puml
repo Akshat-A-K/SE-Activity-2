@@ -1,0 +1,42 @@
+@startuml
+title Builder Pattern - After
+
+class FlightOrderBuilder {
+  - customer : Customer
+  - flights : List<ScheduledFlight>
+  - passengerNames : List<String>
+  - price : double
+  + withCustomer(customer : Customer) : FlightOrderBuilder
+  + withFlights(flights : List<ScheduledFlight>) : FlightOrderBuilder
+  + withPassengerNames(passengerNames : List<String>) : FlightOrderBuilder
+  + withPrice(price : double) : FlightOrderBuilder
+  + build() : FlightOrder
+}
+
+class ScheduledFlightBuilder {
+  - number : int
+  - departure : Airport
+  - arrival : Airport
+  - aircraft : Aircraft
+  - departureTime : Date
+  - currentPrice : Double
+  + withNumber(number : int) : ScheduledFlightBuilder
+  + withDeparture(departure : Airport) : ScheduledFlightBuilder
+  + withArrival(arrival : Airport) : ScheduledFlightBuilder
+  + withAircraft(aircraft : Aircraft) : ScheduledFlightBuilder
+  + withDepartureTime(departureTime : Date) : ScheduledFlightBuilder
+  + withCurrentPrice(currentPrice : double) : ScheduledFlightBuilder
+  + build() : ScheduledFlight
+}
+
+class Customer
+class Schedule
+class FlightOrder
+class ScheduledFlight
+
+Customer ..> FlightOrderBuilder : uses
+Schedule ..> ScheduledFlightBuilder : uses
+FlightOrderBuilder ..> FlightOrder : builds
+ScheduledFlightBuilder ..> ScheduledFlight : builds
+
+@enduml

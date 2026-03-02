@@ -1,0 +1,57 @@
+@startuml
+title Factory Pattern - Before
+
+class Runner {
+    - airports : List<Airport>
+    - aircrafts : List<Object>
+    - flights : List<Flight>
+    - schedule : Schedule
+}
+
+class Airport
+class Schedule
+class Passenger
+
+class Flight {
+    - number : int
+    - departure : Airport
+    - arrival : Airport
+    # aircraft : Object
+    + Flight(number, departure, arrival, aircraft)
+}
+
+class ScheduledFlight {
+    - passengers : List<Passenger>
+    - departureTime : Date
+    - currentPrice : double
+    + ScheduledFlight(number, departure, arrival, aircraft, departureTime)
+}
+
+class PassengerPlane {
+    + model : String
+    + passengerCapacity : int
+    + crewCapacity : int
+}
+
+class Helicopter {
+    - model : String
+    - passengerCapacity : int
+}
+
+class PassengerDrone {
+    - model : String
+}
+
+Runner ..> PassengerPlane : new
+Runner ..> Helicopter : new
+Runner ..> PassengerDrone : new
+Runner ..> Airport : new
+Runner ..> Schedule : field
+Runner ..> Flight : Object arg
+ScheduledFlight --|> Flight
+Flight --> Airport : departure/arrival
+Flight ..> PassengerPlane : instanceof
+Flight ..> Helicopter : instanceof
+Flight ..> PassengerDrone : instanceof
+
+@enduml

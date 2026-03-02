@@ -1,0 +1,31 @@
+Project Name,Package Name,Type Name,Code Smell
+java,flight.reservation,Customer,Cyclic-Dependent Modularization
+java,flight.reservation,Passenger,Unutilized Abstraction
+java,flight.reservation.flight.builder,ScheduledFlightBuilder,Unutilized Abstraction
+java,flight.reservation.flight,Schedule,Unutilized Abstraction
+java,flight.reservation.flight,ScheduledFlight,Broken Hierarchy
+java,flight.reservation.flight,ScheduledFlight,Cyclic-Dependent Modularization
+java,flight.reservation.flight.observer,ScheduleEvent,Cyclic-Dependent Modularization
+java,flight.reservation.flight.observer,ScheduleObserver,Cyclic-Dependent Modularization
+java,flight.reservation.flight.observer,ScheduleSubject,Unutilized Abstraction
+java,flight.reservation.flight.pricing,DemandPricing,Unutilized Abstraction
+java,flight.reservation.flight.pricing,FixedPricing,Unutilized Abstraction
+java,flight.reservation.flight.pricing,PricingStrategy,Cyclic-Dependent Modularization
+java,flight.reservation.order.builder,FlightOrderBuilder,Unutilized Abstraction
+java,flight.reservation.order,FlightOrder,Unutilized Abstraction
+java,flight.reservation.order,FlightOrder,Broken Hierarchy
+java,flight.reservation.order,Order,Unutilized Abstraction
+java,flight.reservation.order.validation,CapacityValidator,Unutilized Abstraction
+java,flight.reservation.order.validation,NoFlyValidator,Unutilized Abstraction
+java,flight.reservation.order.validation,OrderValidationContext,Cyclic-Dependent Modularization
+java,flight.reservation.order.validation,OrderValidationHandler,Cyclic-Dependent Modularization
+java,flight.reservation.payment,CreditCardAdapter,Unutilized Abstraction
+java,flight.reservation.payment,Paypal,Unnecessary Abstraction
+java,flight.reservation.payment,Paypal,Deficient Encapsulation
+java,flight.reservation.payment,PaypalAdapter,Unutilized Abstraction
+java,flight.reservation.plane,AircraftFactory,Unutilized Abstraction
+java,flight.reservation.plane,Helicopter,Unutilized Abstraction
+java,flight.reservation.plane,PassengerDrone,Unutilized Abstraction
+java,flight.reservation.plane,PassengerPlane,Unutilized Abstraction
+java,flight.reservation.plane,PassengerPlane,Deficient Encapsulation
+java,(default package),Runner,Unutilized Abstraction

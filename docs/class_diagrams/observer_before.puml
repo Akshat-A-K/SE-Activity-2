@@ -1,0 +1,55 @@
+@startuml
+title Observer Pattern - Before
+
+class Schedule {
+    - scheduledFlights : List<ScheduledFlight>
+    + scheduleFlight(flight : Flight, date : Date)
+    + removeFlight(flight : Flight)
+    + removeScheduledFlight(flight : ScheduledFlight)
+    + searchScheduledFlight(flightNumber : int) : ScheduledFlight
+    + clear()
+}
+
+class Flight
+class Passenger
+
+class Customer {
+    - email : String
+    - name : String
+    - orders : List<Order>
+    + createOrder(passengerNames, flights, price)
+}
+
+class FlightOrder {
+    - flights : List<ScheduledFlight>
+    + noFlyList : List<String> {static}
+}
+
+class ScheduledFlight {
+    - passengers : List<Passenger>
+    - departureTime : Date
+    - currentPrice : double
+    + addPassengers(passengers : List<Passenger>)
+    + removePassengers(passengers : List<Passenger>)
+    + setCurrentPrice(currentPrice : double)
+}
+
+class Order {
+    - id : UUID
+    - price : double
+    - isClosed : boolean
+    - customer : Customer
+    - passengers : List<Passenger>
+}
+FlightOrder --|> Order
+
+Schedule o-- "*" ScheduledFlight
+Schedule ..> Flight : param
+Customer ..> FlightOrder : creates
+Customer ..> ScheduledFlight : direct call
+Customer o-- "*" Order
+FlightOrder --> "*" ScheduledFlight : flights
+Order --> Customer : customer
+Order --> "*" Passenger : passengers
+
+@enduml

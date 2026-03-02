@@ -1,0 +1,34 @@
+@startuml
+title Factory Pattern - After
+
+interface Aircraft {
+  + getModel() : String
+  + getPassengerCapacity() : int
+  + getCrewCapacity() : int
+}
+
+class PassengerPlane
+class Helicopter
+class PassengerDrone
+
+class AircraftFactory {
+  + createAircraft(type : String, model : String) : Aircraft
+}
+
+class Runner {
+  - aircrafts : List<Aircraft>
+}
+
+class Flight {
+  # aircraft : Aircraft
+  + Flight(number, departure, arrival, aircraft)
+}
+
+PassengerPlane ..|> Aircraft
+Helicopter ..|> Aircraft
+PassengerDrone ..|> Aircraft
+AircraftFactory ..> Aircraft : creates
+Runner ..> AircraftFactory : uses
+Runner ..> Flight : passes
+
+@enduml

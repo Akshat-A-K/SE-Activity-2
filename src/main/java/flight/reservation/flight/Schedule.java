@@ -1,16 +1,24 @@
 package flight.reservation.flight;
 
+import flight.reservation.flight.builder.ScheduledFlightBuilder;
+import flight.reservation.flight.observer.ScheduleEvent;
+import flight.reservation.flight.observer.ScheduleEventType;
+import flight.reservation.flight.observer.ScheduleObserver;
+import flight.reservation.flight.observer.ScheduleSubject;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Schedule {
+public class Schedule implements ScheduleSubject {
 
     private List<ScheduledFlight> scheduledFlights;
+    private final List<ScheduleObserver> observers;
 
 
     public Schedule() {
         scheduledFlights = new ArrayList<>();
+        observers = new ArrayList<>();
     }
 
     public List<ScheduledFlight> getScheduledFlights() {
@@ -18,8 +26,15 @@ public class Schedule {
     }
 
     public void scheduleFlight(Flight flight, Date date) {
-        ScheduledFlight scheduledFlight = new ScheduledFlight(flight.getNumber(), flight.getDeparture(), flight.getArrival(), flight.getAircraft(), date);
+        ScheduledFlight scheduledFlight = new ScheduledFlightBuilder()
+                .withNumber(flight.getNumber())
+                .withDeparture(flight.getDeparture())
+                .withArrival(flight.getArrival())
+                .withAircraft(flight.getAircraft())
+                .withDepartureTime(date)
+                .build();
         scheduledFlights.add(scheduledFlight);
+        notifyObservers(new ScheduleEvent(ScheduleEventType.FLIGHT_SCHEDULED, scheduledFlight));
     }
 
     public void removeFlight(Flight flight) {
@@ -33,10 +48,12 @@ public class Schedule {
             }
         }
         scheduledFlights.removeAll(tbr);
+        tbr.forEach(scheduledFlight -> notifyObservers(new ScheduleEvent(ScheduleEventType.FLIGHT_REMOVED, scheduledFlight)));
     }
 
     public void removeScheduledFlight(ScheduledFlight flight) {
         scheduledFlights.remove(flight);
+        notifyObservers(new ScheduleEvent(ScheduleEventType.FLIGHT_REMOVED, flight));
     }
 
     public ScheduledFlight searchScheduledFlight(int flightNumber) {
@@ -48,5 +65,20 @@ public class Schedule {
 
     public void clear() {
         scheduledFlights.clear();
+    }
+
+    @Override
+    public void addObserver(ScheduleObserver observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(ScheduleObserver observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(ScheduleEvent event) {
+        observers.forEach(observer -> observer.onScheduleEvent(event));
     }
 }

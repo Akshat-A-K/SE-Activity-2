@@ -1,0 +1,32 @@
+@startuml
+title Adapter Pattern - After
+
+interface PaymentProcessor {
+  + pay(amount : double) : boolean
+}
+
+class CreditCardAdapter {
+  - creditCard : CreditCard
+  + pay(amount : double) : boolean
+}
+
+class PaypalAdapter {
+  - email : String
+  - password : String
+  + pay(amount : double) : boolean
+}
+
+class FlightOrder {
+  + processOrder(paymentProcessor : PaymentProcessor) : boolean
+}
+
+class CreditCard
+class Paypal
+
+CreditCardAdapter ..|> PaymentProcessor
+PaypalAdapter ..|> PaymentProcessor
+FlightOrder ..> PaymentProcessor : uses
+CreditCardAdapter ..> CreditCard : wraps
+PaypalAdapter ..> Paypal : wraps
+
+@enduml

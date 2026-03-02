@@ -1,0 +1,29 @@
+@startuml
+title Chain of Responsibility Pattern - After
+
+class OrderValidationContext {
+  - customer : Customer
+  - passengerNames : List<String>
+  - flights : List<ScheduledFlight>
+}
+
+abstract class OrderValidationHandler {
+  - next : OrderValidationHandler
+  + setNext(next : OrderValidationHandler) : OrderValidationHandler
+  + validate(context : OrderValidationContext) : boolean
+  # check(context : OrderValidationContext) : boolean
+}
+
+class NoFlyValidator
+class CapacityValidator
+class Customer {
+  - isOrderValid(passengerNames, flights) : boolean
+}
+
+NoFlyValidator --|> OrderValidationHandler
+CapacityValidator --|> OrderValidationHandler
+OrderValidationHandler --> OrderValidationHandler : next
+OrderValidationHandler ..> OrderValidationContext : checks
+Customer ..> OrderValidationHandler : uses chain
+
+@enduml

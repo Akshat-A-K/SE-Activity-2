@@ -1,0 +1,55 @@
+@startuml
+title Builder Pattern - Before
+
+class Customer {
+    - email : String
+    - name : String
+    - orders : List<Order>
+    + createOrder(passengerNames : List<String>, flights : List<ScheduledFlight>, price : double) : FlightOrder
+    - isOrderValid(passengerNames : List<String>, flights : List<ScheduledFlight>) : boolean
+}
+
+class Order {
+    - id : UUID
+    - price : double
+    - isClosed : boolean
+    - customer : Customer
+    - passengers : List<Passenger>
+    + setCustomer(customer : Customer)
+    + setPrice(price : double)
+    + setPassengers(passengers : List<Passenger>)
+}
+
+class FlightOrder {
+    - flights : List<ScheduledFlight>
+    + noFlyList : List<String> {static}
+    + FlightOrder(flights : List<ScheduledFlight>)
+    + getScheduledFlights() : List<ScheduledFlight>
+}
+
+class Passenger {
+    - name : String
+    + Passenger(name : String)
+}
+
+class ScheduledFlight {
+    - passengers : List<Passenger>
+    - departureTime : Date
+    - currentPrice : double
+    + ScheduledFlight(number : int, departure : Airport, arrival : Airport, aircraft : Object, departureTime : Date)
+    + ScheduledFlight(number : int, departure : Airport, arrival : Airport, aircraft : Object, departureTime : Date, currentPrice : double)
+    + addPassengers(passengers : List<Passenger>)
+}
+
+class Airport
+
+FlightOrder --|> Order
+Order --> Customer : customer
+Order --> "*" Passenger : passengers
+FlightOrder --> "*" ScheduledFlight : flights
+
+Customer ..> FlightOrder : multi-step
+Customer ..> Passenger : maps names
+Customer ..> ScheduledFlight : adds passengers
+
+@enduml

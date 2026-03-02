@@ -1,9 +1,8 @@
 import flight.reservation.Airport;
 import flight.reservation.flight.Schedule;
 import flight.reservation.flight.Flight;
-import flight.reservation.plane.Helicopter;
-import flight.reservation.plane.PassengerDrone;
-import flight.reservation.plane.PassengerPlane;
+import flight.reservation.plane.Aircraft;
+import flight.reservation.plane.AircraftFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,13 +19,13 @@ public class Runner {
             new Airport("Chengdu Shuangliu International Airport", "CTU", "Shuangliu-Wuhou, Chengdu, Sichuan")
     );
 
-    static List<Object> aircrafts = Arrays.asList(
-            new PassengerPlane("A380"),
-            new PassengerPlane("A350"),
-            new PassengerPlane("Embraer 190"),
-            new PassengerPlane("Antonov AN2"),
-            new Helicopter("H1"),
-            new PassengerDrone("HypaHype")
+    static List<Aircraft> aircrafts = Arrays.asList(
+            AircraftFactory.createAircraft("plane", "A380"),
+            AircraftFactory.createAircraft("plane", "A350"),
+            AircraftFactory.createAircraft("plane", "Embraer 190"),
+            AircraftFactory.createAircraft("plane", "Antonov AN2"),
+            AircraftFactory.createAircraft("helicopter", "H1"),
+            AircraftFactory.createAircraft("drone", "HypaHype")
     );
 
     static List<Flight> flights = Arrays.asList(

@@ -5,17 +5,14 @@ This document presents the code quality metrics for the Reservation-System-Start
 
 - **Checkstyle** (output: analysis-output/checkstyle-report.xml)
 - **DesigniteJava** (output: analysis-output/designite-output/)
-- **SonarQube** (to be run after SonarScanner is configured)
 
 ## Tools Used
 - Checkstyle 13.0.0
 - DesigniteJava
-- (SonarQube planned)
 
 ## Metrics Collected
 - Coding standard violations (Checkstyle)
 - Code smells, design/code metrics (DesigniteJava)
-- (SonarQube: bugs, vulnerabilities, code smells, coverage, duplications)
 
 ## How to Reproduce
 1. Run Checkstyle:
@@ -25,10 +22,6 @@ This document presents the code quality metrics for the Reservation-System-Start
 2. Run DesigniteJava:
    ```
    java -jar "C:\Users\kotad\Downloads\DesigniteJava.jar" -i src/main/java -o analysis-output/designite-output
-   ```
-3. (Optional) Run SonarQube analysis after SonarScanner is configured:
-   ```
-   sonar-scanner
    ```
 
 ## Output Location

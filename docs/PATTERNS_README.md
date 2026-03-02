@@ -39,9 +39,3 @@ This document summarizes candidate design patterns for the Reservation-System-St
 4. Add `PricingStrategy` for `ScheduledFlight` price computation.
 5. Add `Observer` support on `Schedule` for notifications and UI updates.
 6. Add `Builder` types for complex object creation (orders, scheduled flights).
-
-**Next steps**:
-- Implement step 1 (`Aircraft` + `AircraftFactory`) to remove `instanceof` checks.
-- Optionally implement step 2 (payment adapters) in parallel.
-
-If you want, I can implement step 1 now (create `Aircraft` interface, `AircraftFactory`, and refactor `Flight`/`ScheduledFlight`).

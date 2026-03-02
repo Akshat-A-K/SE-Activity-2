@@ -1,5 +1,5 @@
 @startuml
-title Adapter Pattern - Before
+title Strategy Pattern - Before
 
 class Order {
     - id : UUID
@@ -7,30 +7,24 @@ class Order {
     - isClosed : boolean
     - customer : Customer
     - passengers : List<Passenger>
-    + getId() : UUID
-    + getPrice() : double
-    + setPrice(price)
-    + getCustomer() : Customer
-    + setCustomer(customer)
-    + isClosed() : boolean
-    + setClosed()
 }
-
-class Customer
-class Passenger
-class ScheduledFlight
 
 class FlightOrder {
     - flights : List<ScheduledFlight>
     + noFlyList : List<String> {static}
-    + FlightOrder(flights : List<ScheduledFlight>)
-    + getNoFlyList() : List<String>
-    + getScheduledFlights() : List<ScheduledFlight>
     + processOrderWithCreditCardDetail(number : String, expirationDate : Date, cvv : String) : boolean
     + processOrderWithCreditCard(card : CreditCard) : boolean
     + processOrderWithPayPal(email : String, password : String) : boolean
     + payWithCreditCard(card : CreditCard, amount : double) : boolean
     + payWithPayPal(email : String, password : String, amount : double) : boolean
+}
+
+class ScheduledFlight {
+    - passengers : List<Passenger>
+    - departureTime : Date
+    - currentPrice : double
+    + getCurrentPrice() : double
+    + setCurrentPrice(currentPrice : double)
 }
 
 class CreditCard {
@@ -39,7 +33,6 @@ class CreditCard {
     - date : Date
     - cvv : String
     - valid : boolean
-    + CreditCard(number : String, date : Date, cvv : String)
     + isValid() : boolean
     + getAmount() : double
     + setAmount(amount : double)
@@ -50,10 +43,8 @@ class Paypal {
 }
 
 FlightOrder --|> Order
-Order --> Customer : customer
-Order --> "*" Passenger : passengers
 FlightOrder --> "*" ScheduledFlight : flights
-FlightOrder ..> CreditCard : direct
-FlightOrder ..> Paypal : static DB
+FlightOrder ..> CreditCard : card flow
+FlightOrder ..> Paypal : paypal flow
 
 @enduml

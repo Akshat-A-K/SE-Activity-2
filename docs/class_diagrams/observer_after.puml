@@ -1,0 +1,35 @@
+@startuml
+title Observer Pattern - After
+
+interface ScheduleObserver {
+  + onScheduleEvent(event : ScheduleEvent)
+}
+
+interface ScheduleSubject {
+  + addObserver(observer : ScheduleObserver)
+  + removeObserver(observer : ScheduleObserver)
+  + notifyObservers(event : ScheduleEvent)
+}
+
+class ScheduleEvent {
+  - type : ScheduleEventType
+  - scheduledFlight : ScheduledFlight
+}
+
+enum ScheduleEventType {
+  FLIGHT_SCHEDULED
+  FLIGHT_REMOVED
+  PRICE_UPDATED
+}
+
+class Schedule
+class ScheduledFlight
+
+Schedule ..|> ScheduleSubject
+ScheduledFlight ..|> ScheduleSubject
+Schedule --> "*" ScheduleObserver : observers
+ScheduledFlight --> "*" ScheduleObserver : observers
+Schedule ..> ScheduleEvent : emits
+ScheduledFlight ..> ScheduleEvent : emits
+
+@enduml

@@ -1,0 +1,23 @@
+@startuml
+title Strategy Pattern - After
+
+interface PricingStrategy {
+  + compute(scheduledFlight : ScheduledFlight) : double
+}
+
+class FixedPricing
+class DemandPricing
+
+class ScheduledFlight {
+  - pricingStrategy : PricingStrategy
+  - basePrice : double
+  - currentPrice : double
+  + setPricingStrategy(pricingStrategy : PricingStrategy)
+  + applyPricingStrategy() : double
+}
+
+FixedPricing ..|> PricingStrategy
+DemandPricing ..|> PricingStrategy
+ScheduledFlight ..> PricingStrategy : uses
+
+@enduml
